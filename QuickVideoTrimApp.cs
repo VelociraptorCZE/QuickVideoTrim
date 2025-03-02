@@ -51,14 +51,24 @@ namespace QuickVideoTrim
 
         private string GetTrimArguments()
         {
-            FileInfo videoInfo = new FileInfo(importVideoDialog.FileName);
+            string extension = ".mp4";
+
+            try
+            {
+                FileInfo videoInfo = new FileInfo(importVideoDialog.FileName);
+                extension = videoInfo.Extension;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Cannot get video extension: {e.Message}");
+            }
 
             string arguments = $"-i \"{importVideoDialog.FileName}\" " +
                 $"-ss {trimStart.Text} " +
                 $"-to {trimEnd.Text} " +
                 $"-c:v copy -c:a " +
-                $"copy \"{exportVideoDialog.FileName.Replace(videoInfo.Extension, "")}" +
-                $"{videoInfo.Extension}\"";
+                $"copy \"{exportVideoDialog.FileName.Replace(extension, "")}" +
+                $"{extension}\"";
 
             Clipboard.SetText("ffmpeg " + arguments);
 
